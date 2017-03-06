@@ -1,5 +1,6 @@
-require "wilderpeople/version"
+require 'wilderpeople/version'
+require 'wilderpeople/search'
 
 module Wilderpeople
-  # Your code goes here...
+
 end

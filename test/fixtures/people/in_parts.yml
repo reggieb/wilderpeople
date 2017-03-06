@@ -1,0 +1,46 @@
+---
+one:
+  title: Mr
+  forename: Rob
+  surname: Nichols
+  dob: '01/11/1966'
+  gender: male
+  flat: null
+  house_number: 13
+  building_name: null
+  street: Some Road
+  street_two: Suburb
+  town: Somewhere
+  county: Warwickshire
+  postcode: CV1 2AB
+
+two:
+  title: Mrs
+  forename: Mary
+  surname: Smith
+  dob: '05/11/1980'
+  gender: female
+  flat: null
+  house_number: 20
+  building_name: null
+  street: Some Road
+  street_two: Suburb
+  town: Somewhere
+  county: Warwickshire
+  postcode: CV1 2AB
+
+three:
+  title: Mr
+  forename: Gerry
+  surname: Nichols
+  dob: '01/11/1966'
+  gender: male
+  flat: null
+  house_number: 14
+  building_name: null
+  street: Another Place
+  street_two: Suburb
+  town: Somewhere
+  county: Warwickshire
+  postcode: CV1 2BB
+
