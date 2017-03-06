@@ -15,6 +15,24 @@ module Wilderpeople
     def search
       @search ||= Search.new(people_in_parts.values)
     end
+
+    def config
+      {
+        must: {
+          surname: :exact,
+          dob: :fuzzy_date,
+          postcode: :transposed,
+          street_name: :exact_except_last_word
+        },
+        can: {
+          gender: :first_letter,
+          house_number: :exact,
+          house_name: :exact,
+          postcode: :exact_no_space,
+          firstname: :hypocorism
+        }
+      }
+    end
   end
 end
 
