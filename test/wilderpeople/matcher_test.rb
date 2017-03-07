@@ -33,6 +33,19 @@ module Wilderpeople
       )
     end
 
+    def test_exact_with_extra_spaces
+      assert_with_set(
+        method: :exact,
+        input: 'robert',
+        resultset: {
+          'robert' => true,
+          ' robert' => true,
+          'robert ' => true,
+          ' robert ' => true
+        }
+      )
+    end
+
     def test_transposed
       assert_with_set(
         method: :transposed,
@@ -123,6 +136,43 @@ module Wilderpeople
           'trebor' => false,
           'retbor' => false,
           'robert bruce' => false,
+          '' => false
+        }
+      )
+    end
+
+    def test_hypocorism
+      assert_with_set(
+        method: :hypocorism,
+        input: 'robert',
+        resultset: {
+          'robert' => true,
+          'rob ert' => false,
+          'rob' => true,
+          'robertson' => false,
+          'foo' => false,
+          'nobert' => false,
+          'trebor' => false,
+          'retbor' => false,
+          'robert bruce' => false,
+          '' => false
+        }
+      )
+    end
+
+    def test_fuzzy_date
+      assert_with_set(
+        method: :fuzzy_date,
+        input: '3/5/2001',
+        resultset: {
+          '3/5/2001' => true,
+          ' 3/5/2001 ' => true,
+          '03/05/2001' => true,
+          '5/3/2001' => true,
+          '3-May-2001' => true,
+          '21/06/2001' => false,
+          '4/5/2001' => false,
+          'foo' => false,
           '' => false
         }
       )
