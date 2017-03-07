@@ -178,6 +178,25 @@ module Wilderpeople
       )
     end
 
+    def test_fuzzy
+      assert_with_set(
+        method: :fuzzy,
+        input: 'robert',
+        resultset: {
+          'robert' => true,
+          'rob ert' => true,
+          'rob' => false,
+          'robertson' => false,
+          'foo' => false,
+          'nobert' => true,
+          'trebor' => false,
+          'retbor' => false,
+          'robert bruce' => false,
+          '' => false
+        }
+      )
+    end
+
     def assert_with_set(method: '', input: '', resultset: {})
       resultset.each do |match, expected|
         assert_equal(

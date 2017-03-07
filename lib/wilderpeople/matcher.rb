@@ -1,5 +1,6 @@
 require 'hypocorism'
 require 'date'
+require 'levenshtein'
 module Wilderpeople
   class Matcher
 
@@ -49,6 +50,12 @@ module Wilderpeople
       exact(dates[0], swap_day_month(dates[1]))
     rescue ArgumentError # Error raised when entry won't parse
       false
+    end
+
+    def fuzzy(a,b, threshold = 0.3)
+      exact(a,b)
+      return false if a.empty? || b.empty?
+      !!Levenshtein.normalized_distance(a,b, threshold)
     end
 
     def prep(*args)
