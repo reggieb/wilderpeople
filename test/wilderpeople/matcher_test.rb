@@ -215,11 +215,17 @@ module Wilderpeople
       )
     end
 
+    def test_unknown_method
+      assert_raises Matcher::NoMatchMethodError do
+        Matcher.foo
+      end
+    end
+
     def assert_with_set(method: '', input: '', resultset: {})
       resultset.each do |match, expected|
         assert_equal(
           expected,
-          matcher.send(method, input, match.dup), # match is a hash key so frozen. Using dup to create unfrozen copy
+          Matcher.send(method, input, match.dup), # match is a hash key so frozen. Using dup to create unfrozen copy
           "'#{input}' should#{' not' unless expected} match '#{match}' with `matcher.#{method}`"
         )
       end
