@@ -216,7 +216,7 @@ module Wilderpeople
     end
 
     def test_unknown_method
-      assert_raises Matcher::NoMatchMethodError do
+      assert_raises NoMethodError do
         Matcher.foo
       end
     end

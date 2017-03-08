@@ -3,7 +3,6 @@ require 'date'
 require 'levenshtein'
 module Wilderpeople
   class Matcher
-    class NoMatchMethodError < StandardError; end
 
     class << self
       attr_writer :levenshtein_threshold
@@ -17,10 +16,10 @@ module Wilderpeople
       # We can do
       #   Matcher.exact(a, b)
       def method_missing(method, *args, &block)
-        if args.size == 2 && protected_instance_methods.include?(method)
+        if protected_instance_methods.include?(method)
           by(method, args[0], args[1])
         else
-          raise NoMatchMethodError.new "No match method '#{method}'"
+          super
         end
       end
 
@@ -38,7 +37,7 @@ module Wilderpeople
     # Also means that I don't have to worry about the result of one match
     # poluting the next match
     def initialize(a, b)
-      @a, @b = a, b
+      @a, @b = a.clone, b.clone
       prep
     end
 

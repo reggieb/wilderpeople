@@ -1,24 +1,27 @@
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/hash/slice'
-class Search
-  attr_reader :data
-  def initialize(data)
-    @data = data
-  end
+module Wilderpeople
+  class Search
+    attr_reader :data, :config
+    def initialize(data: [], config: {})
+      @data = data.collect(&:with_indifferent_access)
+      @config = config
+    end
 
-  def find_by(args = {})
-    select(args).first
-  end
+    def find(args)
+      select(args).first
+    end
 
-  def select(args = {})
-    data.select do |datum|
-      args.all? do |k,v|
-        datum[k] == v
+    def select(args)
+      data.select do |datum|
+        args.all? do |k,v|
+          Matcher.by must_rules[k], datum[k], v
+        end
       end
     end
-  end
 
-  def data_with_indifferent_access
-    @data_with_indifferent_access ||= data.collect(&:with_indifferent_access)
+    def must_rules
+      config[:must]
+    end
   end
 end
