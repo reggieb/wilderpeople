@@ -40,16 +40,20 @@ module Wilderpeople
       Hypocorism.match(a,b)
     end
 
+    def date(a,b)
+      return true if exact(a,b)
+      @dates = [a, b].collect{|x| Date.parse(x)}
+      exact(*@dates)
+    rescue ArgumentError # Error raised when entry won't parse
+      false
+    end
+
     # Matches dates, but also handles day and month being swapped.
     # So 3/5/2001 matches 5/3/2001
     def fuzzy_date(a,b)
-      return true if exact(a,b)
-      dates = [a, b].collect{|x| Date.parse(x)}
-      return true if exact(*dates)
-      return false if dates[1].day > 12
-      exact(dates[0], swap_day_month(dates[1]))
-    rescue ArgumentError # Error raised when entry won't parse
-      false
+      return true if date(a,b)
+      return false if @dates[1].day > 12
+      exact(@dates[0], swap_day_month(@dates[1]))
     end
 
     def fuzzy(a,b, threshold = 0.3)

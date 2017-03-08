@@ -160,6 +160,24 @@ module Wilderpeople
       )
     end
 
+    def test_date
+      assert_with_set(
+        method: :date,
+        input: '3/5/2001',
+        resultset: {
+          '3/5/2001' => true,
+          ' 3/5/2001 ' => true,
+          '03/05/2001' => true,
+          '5/3/2001' => false,
+          '3-May-2001' => true,
+          '21/06/2001' => false,
+          '4/5/2001' => false,
+          'foo' => false,
+          '' => false
+        }
+      )
+    end
+
     def test_fuzzy_date
       assert_with_set(
         method: :fuzzy_date,
