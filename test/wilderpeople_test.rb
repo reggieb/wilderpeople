@@ -11,9 +11,4 @@ class WilderpeopleTest < Minitest::Test
     assert_kind_of String, people_in_parts[:one][:title]
   end
 
-  def test_people_long_address
-    assert_kind_of Hash, people_long_address
-    assert_kind_of String, people_long_address['one']['title']
-    assert_kind_of String, people_long_address[:one][:title]
-  end
 end

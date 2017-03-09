@@ -65,6 +65,7 @@ module Wilderpeople
       exact *words.collect{|w| w.size == 1 ? w : w[0..-2]}
     end
 
+    # Match the first letter only
     def first_letter
       return true if exact
       exact *[a,b].collect{|x| x[0]}
@@ -100,6 +101,12 @@ module Wilderpeople
       exact(dates[0], swap_day_month(@dates[1]))
     end
 
+    # User Levenshtein distance to compare similar strings.
+    # The Levenshtein distance is a string metric for measuring the difference
+    # between two sequences. Informally, the Levenshtein distance between two
+    # words is the minimum number of single-character edits required to change
+    # one word into the other.
+    # See https://github.com/tliff/levenshtein
     def fuzzy(threshold = self.class.levenshtein_threshold)
       exact
       return false if a.empty? || b.empty?

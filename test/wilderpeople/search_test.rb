@@ -2,7 +2,7 @@ require 'test_helper'
 require 'ostruct'
 
 module Wilderpeople
-  class InPartsTest < Minitest::Test
+  class SearchTest < Minitest::Test
 
     def test_find
       result = search.find(
