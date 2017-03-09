@@ -29,12 +29,17 @@ module Wilderpeople
       assert_equal person_data, result
     end
 
+    def test_find_with_two_matching_results
+      @config = { must: {surname: :exact} }
+      assert_nil search.find( surname: person.surname )
+    end
+
     def search
       @search ||= Search.new(data: people_in_parts.values, config: config)
     end
 
     def config
-      {
+      @config ||= {
         must: {
           surname: :exact,
           dob: :fuzzy_date,

@@ -9,7 +9,8 @@ module Wilderpeople
     end
 
     def find(args)
-      select(args).first
+      result = select(args)
+      return result.first if result.size == 1
     end
 
     def select(args)
