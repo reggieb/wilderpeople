@@ -23,7 +23,7 @@ module Wilderpeople
         end
       end
 
-      # Another pay to use matcher is:
+      # Another way to use matcher is:
       #   Matcher.by :exact, a, b
       def by(method, a, b)
         raise "Method must be defined" unless method
@@ -85,7 +85,7 @@ module Wilderpeople
     # Match dates
     def date
       return true if exact
-      @dates = [a, b].collect{|x| Date.parse(x)}
+      @dates = [a, b].collect{|x| date_parse(x)}
       exact(*dates)
     rescue ArgumentError # Error raised when entry won't parse
       false
@@ -124,6 +124,23 @@ module Wilderpeople
 
     def swap_day_month(date)
       Date.new(date.year, date.day, date.month)
+    end
+
+    def date_parse(string)
+      Date.parse(string)
+    rescue ArgumentError
+      try_american_format(string)
+    end
+
+    def try_american_format(string)
+      Date.strptime string, "%m/%d/%Y"
+    rescue ArgumentError
+      # Need to catch instance where system is using American format
+      try_proper_format(string)
+    end
+
+    def try_proper_format(string)
+      Date.strptime string, "%d/%m/%Y"
     end
   end
 end
