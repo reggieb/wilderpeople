@@ -4,11 +4,6 @@ require 'ostruct'
 module Wilderpeople
   class InPartsTest < Minitest::Test
 
-    def test_select
-      people = [:one, :three].collect{|n| people_in_parts[n]}
-      assert_equal people, search.select(surname: 'Nichols')
-    end
-#
     def test_find
       result = search.find(
         surname: person.surname,
@@ -30,8 +25,28 @@ module Wilderpeople
     end
 
     def test_find_with_two_matching_results
-      @config = { must: {surname: :exact} }
+      @config = { must: { surname: :exact } }
       assert_nil search.find( surname: person.surname )
+    end
+
+    def test_find_with_two_matching_results_separated_with_can
+      @config = { must: { surname: :exact }, can: { forename: :exact } }
+      result = search.find(
+        surname: person.surname,
+        forename: person.forename
+      )
+      assert_equal person_data, result
+    end
+
+    def test_find_with_two_matching_results_separated_with_can_and_extra_can
+      @config = { must: { surname: :exact }, can: { title: :exact, dob: :exact, forename: :exact } }
+      result = search.find(
+        surname: person.surname,
+        forename: person.forename,
+        dob: person.dob,
+        title: 'Foo'
+      )
+      assert_equal person_data, result
     end
 
     def search
@@ -51,7 +66,7 @@ module Wilderpeople
           house_number: :exact,
           house_name: :exact,
           postcode: :exact_no_space,
-          firstname: :hypocorism
+          forename: :hypocorism
         }
       }
     end

@@ -2,27 +2,64 @@ require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/hash/slice'
 module Wilderpeople
   class Search
-    attr_reader :data, :config
+    attr_reader :data, :config, :result, :args
     def initialize(data: [], config: {})
       @data = data.collect(&:with_indifferent_access)
       @config = config
     end
 
     def find(args)
-      result = select(args)
-      return result.first if result.size == 1
+      @result = data
+      @args = args
+      select_must || select_can
     end
 
-    def select(args)
-      data.select do |datum|
-        args.all? do |k,v|
-          Matcher.by must_rules[k], datum[k], v
+    private
+
+    def select_must
+      return if result.empty?
+      return unless must_rules
+      @result = result.select do |datum|
+        must_rules.all? do |key, matcher_method|
+          return false unless datum[key] && args[key]
+          Matcher.by matcher_method, datum[key], args[key]
         end
       end
+      result.first if result.size == 1
     end
 
     def must_rules
       config[:must]
     end
+
+    def select_can
+      return if result.empty?
+      return unless can_rules
+      # Get all of the matches for each of the can rules.
+      matches = can_rules.collect do |key, matcher_method|
+        result.select do |datum|
+          [matcher_method, datum[key], args[key]]
+          Matcher.by matcher_method, datum[key], args[key]
+        end
+      end
+      # Then determine if one datum appears in more matches
+      # than any other, and if so return that one.
+      occurrences = find_occurrences(matches)
+      count_of_commonest = occurrences.values.max
+      if occurrences.values.count(count_of_commonest) == 1
+        occurrences.rassoc(count_of_commonest)[0]
+      end
+    end
+
+    def can_rules
+      config[:can]
+    end
+
+    # Returns a hash with each item as key, and the count of occurrences as value
+    # See: http://jerodsanto.net/2013/10/ruby-quick-tip-easily-count-occurrences-of-array-elements/
+    def find_occurrences(array)
+      array.flatten.each_with_object(Hash.new(0)){ |item,count| count[item] += 1 }
+    end
+
   end
 end

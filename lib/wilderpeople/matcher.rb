@@ -26,6 +26,7 @@ module Wilderpeople
       # Another pay to use matcher is:
       #   Matcher.by :exact, a, b
       def by(method, a, b)
+        raise "Method must be defined" unless method
         new(a, b).send(method)
       end
     end
