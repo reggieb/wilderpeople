@@ -6,8 +6,7 @@ other types of data from an array.
 
 The tool assumes you have an array of hashes, where each hash describes an
 unique item or person. It then allows you to pass in a "matching dataset" and
-in return it will return the hash that best matches that data, **if there
-is only one best match.**
+in return it will return the hash that best matches that data.
 
 ## Installation
 
@@ -96,6 +95,26 @@ config = {
 search = Wilderpeople::Search.new(data: data, config: config)
 person = search.find surname: 'Bloggs', forename: 'Fred',  gender: 'Female'
 person == {surname: 'Bloggs', forename: 'Winifred', gender: 'Female'}
+```
+
+### Select
+
+If it is not necessary to return a unique record, `select` can be used to
+retrieve all the items that match the `config` criteria.
+
+```ruby
+config = {
+  must: {
+    surname: :exact,
+    gender: :exact
+  }
+}
+search = Wilderpeople::Search.new(data: data, config: config)
+person = search.select surname: 'Bloggs', gender: 'Female'
+person == [
+  {"surname"=>"Bloggs", "forename"=>"Winifred", "gender"=>"Female"},
+  {"surname"=>"Bloggs", "forename"=>"Jane", "gender"=>"Female"}
+]
 ```
 
 ### Criteria configuration

@@ -8,9 +8,16 @@ module Wilderpeople
     end
 
     def find(args)
+      select(args)
+      result.first if result.size == 1
+    end
+
+    def select(args)
       @result = data
       @args = args
-      select_must || select_can
+      select_must
+      select_can if result.size > 1
+      result
     end
 
     private
@@ -24,7 +31,6 @@ module Wilderpeople
           Matcher.by matcher_method, datum[key], args[key]
         end
       end
-      result.first if result.size == 1
     end
 
     def must_rules
@@ -41,13 +47,11 @@ module Wilderpeople
           Matcher.by matcher_method, datum[key], args[key]
         end
       end
-      # Then determine if one datum appears in more matches
-      # than any other, and if so return that one.
+      # Then determine which items appears in more matches
+      # than any other, and if so return those.
       occurrences = find_occurrences(matches)
       count_of_commonest = occurrences.values.max
-      if occurrences.values.count(count_of_commonest) == 1
-        occurrences.rassoc(count_of_commonest)[0]
-      end
+      @result = occurrences.select{|_k, v| v == count_of_commonest}.keys
     end
 
     def can_rules

@@ -49,6 +49,42 @@ module Wilderpeople
       assert_equal person_data, result
     end
 
+    def test_select
+      result = search.select(
+        surname: person.surname,
+        dob: person.dob,
+        postcode: person.postcode,
+        street: person.street
+      )
+      assert_equal [person_data], result
+    end
+
+    def test_select_with_small_data_divergence
+      result = search.select(
+        surname: person.surname,
+        dob: '11/01/1966', # swap day and month
+        postcode: 'CV1 2BA', # shuffled
+        street: 'Some Rd' # Change last word: e.g. From 'Road' to 'Rd'
+      )
+      assert_equal [person_data], result
+    end
+
+    def test_select_with_two_matching_results
+      @config = { must: { surname: :exact } }
+      result = search.select( surname: person.surname )
+      assert_equal 2, result.length
+      assert_includes result, person_data
+    end
+
+    def test_select_with_two_matching_results_separated_with_can
+      @config = { must: { surname: :exact }, can: { forename: :exact } }
+      result = search.select(
+        surname: person.surname,
+        forename: person.forename
+      )
+      assert_equal [person_data], result
+    end
+
     def search
       @search ||= Search.new(data: people_in_parts.values, config: config)
     end
