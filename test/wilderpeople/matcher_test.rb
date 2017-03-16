@@ -84,6 +84,25 @@ module Wilderpeople
       )
     end
 
+    def test_spaceless_transposed
+      assert_with_set(
+        method: :spaceless_transposed,
+        input: 'robert',
+        resultset: {
+          'robert' => true,
+          'rob ert' => true,
+          'rob' => false,
+          'robertson' => false,
+          'foo' => false,
+          'nobert' => false,
+          'trebor' => true,
+          'retbor' => true,
+          'robert bruce' => false,
+          '' => false
+        }
+      )
+    end
+
     def test_exact_except_last_word
       assert_with_set(
         method: :exact_except_last_word,

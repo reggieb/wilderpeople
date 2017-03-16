@@ -56,6 +56,13 @@ module Wilderpeople
       exact *[a,b].collect{|x| x.chars.sort}
     end
 
+    # All the right letters but not necessarily in the right order
+    # and ignoring spaces
+    def spaceless_transposed
+      return true if exact
+      exact *[a,b].collect{|x| remove_white_space(x).chars.sort}
+    end
+
     # Designed for matching street names, so don't have to worry about
     # Road/Rb and Street/St.
     # Note that if matching one word, just that word is matched
@@ -74,12 +81,13 @@ module Wilderpeople
     # Match 'Foo bar' with 'Foobar'
     def exact_no_space
       return true if exact
-      exact *[a,b].collect{|x| x.gsub(/\s/, '')}
+      exact *[a,b].collect{|x| remove_white_space(x)}
     end
 
     # Match English first names with alternative forms
     # So 'Robert' matches 'Rob'
     def hypocorism
+      return true if exact
       Hypocorism.match(a,b)
     end
 
@@ -108,7 +116,7 @@ module Wilderpeople
     # one word into the other.
     # See https://github.com/tliff/levenshtein
     def fuzzy(threshold = self.class.levenshtein_threshold)
-      exact
+      return true if exact
       return false if a.empty? || b.empty?
       !!Levenshtein.normalized_distance(a,b, threshold)
     end
@@ -148,6 +156,10 @@ module Wilderpeople
 
     def try_proper_format(string)
       Date.strptime string, "%d/%m/%Y"
+    end
+
+    def remove_white_space(string)
+      string.gsub(/\s/, '')
     end
   end
 end
